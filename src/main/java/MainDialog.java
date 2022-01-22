@@ -1,5 +1,4 @@
-import com.google.gson.Gson;
-import model.Message;
+import model.Data;
 import server.Server;
 import server.ServerListeners;
 import server.ServerThread;
@@ -7,7 +6,6 @@ import server.ServerThread;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 
 public class MainDialog extends JDialog {
     private JPanel contentPane;
@@ -81,10 +79,16 @@ public class MainDialog extends JDialog {
              }
 
              @Override
-             public void onReceivedMessage(Message message) {
-                 String pMessage = textArea1.getText()+message.toString()+"\n";
+             public void onReceivedMessage(Data data) {
+                 String pMessage = textArea1.getText()+ data.toString()+"\n";
                  textArea1.setText(pMessage);
 
+             }
+
+             @Override
+             public void newUserJoin(String username) {
+                 String pMessage = textArea1.getText()+username+ " is join\n";
+                 textArea1.setText(pMessage);
              }
          });
          serverThread.startServer();
@@ -96,8 +100,7 @@ public class MainDialog extends JDialog {
     }
 
     public static void main(String[] args) {
-        Message message = new Message("hellow",1,2);
-        System.out.println(message.getJsonString());
+
 
         MainDialog dialog = new MainDialog();
         dialog.setPreferredSize(new Dimension(500,500));

@@ -1,10 +1,11 @@
 package server;
 
-import model.Message;
+import model.Data;
 
 public interface ServerListeners {
     void onError(String message);
     void onStart(String message);
     void onStop(String message);
-    void onReceivedMessage(Message message);
+    void newUserJoin(String username);
+    void onReceivedMessage(Data data);
 }

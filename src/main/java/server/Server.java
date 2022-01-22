@@ -1,6 +1,7 @@
 package server;
 
-import model.Message;
+import model.Data;
+import model.Type;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -30,6 +31,7 @@ public class Server {
            DataInputStream dis = new DataInputStream(socket.getInputStream());
            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
            Client client = new Client(clientId,this,socket,dos,dis);
+           client.setServerListeners(serverListeners);
            Thread clientThread = new Thread(client);
            clientThread.start();
            clientList.add(client);
@@ -40,6 +42,7 @@ public class Server {
     public List<Client> getClientList() {
         return clientList;
     }
+
 
     public int getPort() {
         return port;
@@ -53,12 +56,31 @@ public class Server {
         return stop;
     }
 
-    public void broadcast(Message message) {
+    public void broadCastUserListUpdate(){
+        List<String> clientNamesList = new ArrayList<String>();
+        for(Client client : clientList){
+            clientNamesList.add(client.getName());
+        }
+        Data userData = new Data();
+
+        userData.setType(Type.USER_LIST_REQUEST);
+        userData.setClientList(clientNamesList);
+        for( Client client :clientList){
+            System.out.println(client.getName()+ ": "+getClientList().toString());
+            client.sendMessage(userData);
+        }
+
+    }
+    public void broadcast(Data data) {
         if(serverListeners !=null){
-            serverListeners.onReceivedMessage(message);
+            serverListeners.onReceivedMessage(data);
         }
         for( Client client :clientList){
-            client.sendMessage(message);
+            if(data.getToClient().equals("All")){
+                client.sendMessage(data);
+            }else if(data.getToClient().equals(client.getName())) {
+                client.sendMessage(data);
+            }
         }
     }
 
