@@ -91,7 +91,7 @@ public class MainDialog extends JDialog {
                  textArea1.setText(pMessage);
              }
          });
-         serverThread.startServer();
+         serverThread.start();
 
 
     }
@@ -101,13 +101,10 @@ public class MainDialog extends JDialog {
 
     public static void main(String[] args) {
 
-
         MainDialog dialog = new MainDialog();
         dialog.setPreferredSize(new Dimension(500,500));
         dialog.pack();
         dialog.setVisible(true);
-
-
         System.exit(0);
     }
 }
